@@ -1,0 +1,4 @@
+{"label": "DATE", "pattern": [{"lower": "spring"}]}
+{"label": "DATE", "pattern": [{"lower": "summer"}]}
+{"label": "DATE", "pattern": [{"lower": "fall"}]}
+{"label": "DATE", "pattern": [{"lower": "next"}, {"lower": "semester"}]}

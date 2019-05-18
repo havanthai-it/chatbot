@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Services Chatbot</title>
+
+    <style>
+        .dialog>div {
+            width: 600px;
+            border: solid 3px;
+        }
+        .dialog #conversation {
+            height: 400px;
+            overflow-y: auto;
+        }
+        .dialog #dashboard {
+            height: 50px;
+        }
+        .dialog #dashboard input[type="text"] {
+            width: 500px;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dialog">
+        <div id="conversation">
+        </div>
+        <div id="dashboard">
+            <input id="message" type="text" placeholder="Enter here...">
+            <input id="btn-send" type="button" value="Send" onclick="send()">
+        </div>
+    </div>
+
+    <script>
+
+        var input = document.getElementById("message");
+        input.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById("btn-send").click();
+            }
+        });
+
+        (function(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    response = this.responseText;
+                }
+            };
+            xhttp.open("POST", "http://127.0.0.1:5000/session", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            parameters = {
+                "roll_number": "SE04801"
+            };
+            xhttp.send(JSON.stringify(parameters));
+        })();
+
+        function send() {
+            var node = document.getElementById("conversation");
+            var message = document.getElementById("message").value;
+            var p = document.createElement("P");
+            var text = document.createTextNode("User: " + message);
+            p.appendChild(text);
+            node.appendChild(p);
+
+            document.getElementById("message").value = ""
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    result = JSON.parse(this.responseText);
+                    list_responses = result["list_responses"];
+
+                    var node = document.getElementById("conversation");
+                    for(var i = 0; i < list_responses.length; i++) {
+                        var p = document.createElement("P");
+                        var text = document.createTextNode("Bot: " + list_responses[i]);
+                        p.appendChild(text);
+                        node.appendChild(p);
+                    }
+                }
+            };
+            xhttp.open("POST", "http://127.0.0.1:5000/dialog", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            parameters = {
+                "roll_number": "SE04801",
+                "message": message
+            };
+            xhttp.send(JSON.stringify(parameters));
+        }
+    </script>
+</body>
+</html>
